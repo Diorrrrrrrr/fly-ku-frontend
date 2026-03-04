@@ -1,8 +1,13 @@
 "use client";
 
+import Link from "next/link"; // 👈 [NEW] 추가!
+import AdBanner from "./components/AdBanner"; // 👈 [NEW] 배너 부품 가져오기
 import { useState, useEffect } from "react";
+import { useSession, signIn, signOut } from "next-auth/react"; // [NEW] 로그인 훅 추가
 
 export default function Home() {
+  const { data: session } = useSession(); // [NEW] 현재 로그인 상태 감지
+  
   const [lang, setLang] = useState<"KR" | "JP">("KR");
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -25,9 +30,13 @@ export default function Home() {
   const t = {
     KR: {
       langBtn: "🇯🇵 日本語",
+      loginBtn: "G 구글 로그인",
+      logoutBtn: "로그아웃",
+      historyBtn: "📜 내 예측 기록",
       title: "Fly-KU, Fly 行く",
       subtitle: "고려대 학생이 제작한 일본행 항공권 구매 타이밍 예측 AI",
       desc1: "현재 도쿄·오사카 왕복 항공권만 지원합니다.",
+      // ... (나머지 기존 텍스트 동일 생략 - 실제 파일엔 모두 유지됩니다)
       marketTitle: "🌏 실시간 시장 데이터",
       currencyLabel: "💴 현재 엔화 (100¥)",
       oilLabel: "🛢️ 국제 유가 (WTI)",
@@ -64,9 +73,13 @@ export default function Home() {
     },
     JP: {
       langBtn: "🇰🇷 한국어",
+      loginBtn: "G Google ログイン",
+      logoutBtn: "ログアウト",
+      historyBtn: "📜 私の予測履歴",
       title: "Fly-KU, Fly 行く",
       subtitle: "高麗大生が開発した日本行き航空券の購入タイミング予測AI",
       desc1: "現在、東京・大阪の往復航空券のみ対応しています。",
+      // ... (나머지 기존 텍스트 동일 생략 - 실제 파일엔 모두 유지됩니다)
       marketTitle: "🌏 リアルタイム市場データ",
       currencyLabel: "💴 現在の円レート (100¥)",
       oilLabel: "🛢️ 国際原油価格 (WTI)",
@@ -118,6 +131,11 @@ export default function Home() {
     setLoading(true);
     const formData = new FormData();
     formData.append("file", file);
+    
+    // [NEW] 로그인한 상태라면 백엔드로 유저 이메일(ID)을 같이 보냅니다
+    if (session?.user?.email) {
+      formData.append("user_id", session.user.email);
+    }
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/predict`, {
@@ -161,7 +179,6 @@ export default function Home() {
     return diffDays > 0 ? `D-${diffDays}` : "D-Day";
   };
 
-  // [NEW] 현재 확률을 기준으로 몇 번째 구간인지 계산하는 함수
   const getTier = (prob: number) => {
     if (prob < 60) return 1;
     if (prob < 75) return 2;
@@ -169,7 +186,6 @@ export default function Home() {
     return 4;
   };
 
-  // 렌더링을 위한 변수 사전 계산
   let currentProb = 0;
   let currentTier = 0;
   if (result?.prediction) {
@@ -177,14 +193,41 @@ export default function Home() {
     currentTier = getTier(currentProb);
   }
 
-  // 동적 CSS 클래스
   const highlightClass = "text-yellow-300 font-bold scale-[1.02] origin-left transition-all duration-300 drop-shadow-md";
   const normalClass = "text-white/80 transition-all duration-300";
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 py-12 px-4 flex flex-col items-center font-sans relative">
       
-      <div className="w-full max-w-3xl flex justify-end mb-4">
+      {/* [NEW] 최상단 네비게이션 바 (로그인 & 언어 변경) */}
+      <div className="w-full max-w-3xl flex justify-between items-center mb-8">
+        <div className="flex items-center gap-3">
+          {session ? (
+            <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
+              {session.user?.image && <img src={session.user.image} alt="profile" className="w-6 h-6 rounded-full" />}
+              <span className="text-sm font-bold text-gray-700">{session.user?.name}님</span>
+
+              {/* <button className="text-sm font-bold text-[#860038] hover:text-[#6d002e] border-l pl-3 ml-1 transition">
+                {ui.historyBtn}
+              </button>
+              */}
+
+              {/* [수정 후] button 대신 Link를 사용합니다 */}
+              <Link href="/history" className="text-sm font-bold text-[#860038] hover:text-[#6d002e] border-l pl-3 ml-1 transition">
+                {ui.historyBtn}
+              </Link>
+
+              <button onClick={() => signOut()} className="text-xs text-gray-400 hover:text-gray-600 transition ml-2">
+                {ui.logoutBtn}
+              </button>
+            </div>
+          ) : (
+            <button onClick={() => signIn("google")} className="bg-white border border-gray-300 px-4 py-2 rounded-lg shadow-sm font-bold text-sm hover:bg-gray-100 transition flex items-center gap-2">
+              <span className="font-black text-[#860038]">G</span> {ui.loginBtn}
+            </button>
+          )}
+        </div>
+        
         <button onClick={() => setLang(lang === "KR" ? "JP" : "KR")} className="bg-white border border-gray-300 px-4 py-2 rounded-lg shadow-sm font-bold text-sm hover:bg-gray-100 transition">
           {ui.langBtn}
         </button>
@@ -197,7 +240,7 @@ export default function Home() {
       </div>
 
       {marketData && (
-        <div className="w-full max-w-2xl mb-8">
+        <div className="w-full max-w-2xl mb-6">
           <h3 className="text-lg font-bold mb-3 text-gray-700">{ui.marketTitle}</h3>
           <div className="flex gap-4">
             <div className="flex-1 bg-white p-5 rounded-xl shadow-sm border border-gray-200 text-center">
@@ -211,6 +254,22 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* 👈 [NEW] 여기에 배너를 쏙 끼워 넣습니다! */}
+      {/* 👈 [NEW] 시장 데이터 아래 (가로로 2개 배치) */}
+      <div className="w-full max-w-2xl flex flex-col sm:flex-row items-stretch gap-4 mb-6">
+        <AdBanner 
+          title="안암역 참살이길, 호호식당 🍱" 
+          desc={<>Fly-KU 보여주면 <span className="text-[#860038] font-bold">가라아게 무료!</span></>} 
+          emoji="🍗" 
+          link="https://korea.ac.kr" 
+        />
+        <AdBanner 
+          imageUrl="/junseo2-2.png" // (PM님이 쓰시는 이미지 파일명)
+          link="https://naver.me/5HkQdUxb" 
+        />
+      </div>
+      
 
       <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 w-full max-w-2xl flex flex-col items-center">
         <label className="w-full cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-[#860038] bg-pink-50/30 rounded-xl p-10 hover:bg-pink-50 transition mb-6">
@@ -235,6 +294,22 @@ export default function Home() {
           <p>{ui.warn3}</p>
           <p className="font-bold mt-1">{ui.warn4}</p>
         </div>
+      </div>
+
+      {/* 👈 [수정] sm:flex-row 뒤에 items-stretch 를 추가합니다! */}
+      <div className="w-full max-w-2xl flex flex-col sm:flex-row items-stretch gap-4 mt-6">
+        <AdBanner 
+          title="고려대 학생 전용, KUPID 복지몰 🎁" 
+          desc={<>이번 달 특가! <span className="text-[#860038] font-bold">애플 워치 15% 할인</span></>} 
+          emoji="🍎" 
+          link="https://kupid.korea.ac.kr/" 
+        />
+        <AdBanner 
+          title="일본 여행 갈 땐, 트래블월렛 💳" 
+          desc={<>지금 가입하면 <span className="text-blue-600 font-bold">100% 환율 우대!</span></>} 
+          emoji="💴" 
+          link="https://www.travel-wallet.com/" 
+        />
       </div>
 
       {result && result.status === "success" && (
