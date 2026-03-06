@@ -326,7 +326,7 @@ export default function Home() {
       {/* 👈 [NEW] 여기에 배너를 쏙 끼워 넣습니다! */}
       {/* 👈 [NEW] 시장 데이터 아래 (가로로 2개 배치) */}
       <div className="w-full max-w-2xl flex flex-col sm:flex-row items-stretch gap-4 mb-6">
-        <AdBanner imageUrl="/junseo2-4.png" link="https://naver.me/5HkQdUxb" />
+        <AdBanner imageUrl="/junseo2-5.png" link="https://naver.me/5HkQdUxb" />
         {/* 👈 [수정] 외부 링크 대신 후원 모달창을 띄우도록 감싸줍니다 */}
         <div
           className="flex-1 cursor-pointer"
