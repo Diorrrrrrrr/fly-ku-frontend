@@ -46,7 +46,7 @@ export default function Home() {
       loginBtn: "로그인",
       logoutBtn: "로그아웃",
       historyBtn: "📜 내 예측 기록",
-      title: "Fly-KU, Fly 行く",
+      title: "FLY-KU, Fly Light",
       subtitle: "고려대 학생이 제작한 일본행 항공권 가격 변동 예측 AI",
       desc1: "현재 도쿄·오사카 왕복 항공권만 지원합니다.",
       // ... (나머지 기존 텍스트 동일 생략 - 실제 파일엔 모두 유지됩니다)
@@ -82,7 +82,7 @@ export default function Home() {
         "거의 확실히 가격이 더 내려갈 것으로 보입니다. 기다리는 것을 강력히 추천드립니다!",
       feedbackBtn: "📧 문의 메일 보내기",
       feedbackTitle:
-        "Fly-KU 서비스를 이용해주셔서 감사합니다. 불편한 점이나 개선할 점을 자유롭게 적어주세요! 🐯",
+        "FLY-KU 서비스를 이용해주셔서 감사합니다. 불편한 점이나 개선할 점을 자유롭게 적어주세요! 🐯",
       phEmail: "답장 받으실 이메일 (example@korea.ac.kr)",
       phSubject: "제목",
       phContent: "내용을 입력해주세요.",
@@ -93,7 +93,7 @@ export default function Home() {
       loginBtn: "ログイン",
       logoutBtn: "ログアウト",
       historyBtn: "📜 私の予測履歴",
-      title: "Fly-KU, Fly 行く",
+      title: "FLY-KU, Fly Light",
       subtitle: "高麗大生が開発した日本行き航空券の価格変動予測AI",
       desc1: "現在、東京・大阪の往復航空券のみ対応しています。",
       // ... (나머지 기존 텍스트 동일 생략 - 실제 파일엔 모두 유지됩니다)
@@ -131,7 +131,7 @@ export default function Home() {
         "ほぼ確実に価格がさらに下がると思われます。待つことを強くお勧めします！",
       feedbackBtn: "📧 お問い合わせ",
       feedbackTitle:
-        "Fly-KUをご利用いただきありがとうございます。ご意見・ご要望など、自由にお書きください！ 🐯",
+        "FLY-KUをご利用いただきありがとうございます。ご意見・ご要望など、自由にお書きください！ 🐯",
       phEmail: "返信先メールアドレス",
       phSubject: "件名",
       phContent: "内容を入力してください。",
@@ -558,7 +558,7 @@ export default function Home() {
           title="안암역 참살이길, 호호식당 *가상의 식당입니다* 🍱"
           desc={
             <>
-              Fly-KU 보여주면{" "}
+              FLY-KU 보여주면{" "}
               <span className="text-[#860038] font-bold">가라아게 무료!</span>
             </>
           }
@@ -643,7 +643,7 @@ export default function Home() {
               ☕ 개발자에게 커피 한 잔 ☕
             </h3>
             <p className="text-sm text-gray-600 mb-6 font-medium leading-relaxed text-center">
-              <b>Fly-KU</b>가 비행기 값을 아끼는 데 도움이 되셨나요? <br />
+              <b>FLY-KU</b>가 비행기 값을 아끼는 데 도움이 되셨나요? <br />
               아주 조그마한 후원이라도
               <br />
               배고픈 학생 개발자의 <b>서버 유지비</b>와 <b>밤샘 커피값</b>에
@@ -688,7 +688,7 @@ export default function Home() {
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                           email: donorEmail, // 후원자 이메일
-                          subject: "💖 [Fly-KU 후원] 새로운 커피 도착 알림!", // PM님이 받을 메일 제목
+                          subject: "💖 [FLY-KU 후원] 새로운 커피 도착 알림!", // PM님이 받을 메일 제목
                           content: `후원자가 연락처를 남겼습니다.\n답장할 이메일: ${donorEmail}\n\n서버비와 커피값에 큰 도움이 됩니다! ☕`, // 메일 내용
                         }),
                       },
